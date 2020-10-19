@@ -1,6 +1,8 @@
 const fs = require('fs');
 const { Client, Location } = require('./index');
 
+var sorteio = '';
+
 const SESSION_FILE_PATH = './session.json';
 let sessionCfg;
 if (fs.existsSync(SESSION_FILE_PATH)) {
@@ -47,8 +49,47 @@ client.on('message', async msg => {
     } else if (msg.body == '!ping') {
         // Send a new message to the same chat
         client.sendMessage(msg.from, 'pong');
+    }else if (msg.body.toLowerCase().indexOf('boa noite') >= 0) {
+        // Send a new message to the same chat
+        client.sendMessage(msg.from, 'Boa noite');
 
-    } else if (msg.body.startsWith('!sendto ')) {
+    }else if (msg.body.toLowerCase().indexOf('oi') >= 0) {
+        // Send a new message to the same chat
+        client.sendMessage(msg.from, 'Oi');
+
+    }else if (msg.body.toLowerCase().indexOf('como vai') >= 0) {
+        // Send a new message to the same chat
+        client.sendMessage(msg.from, 'Bem e vc?');
+
+    }else if (msg.body.toLowerCase().indexOf('estou bem') >= 0) {
+        // Send a new message to the same chat
+        client.sendMessage(msg.from, 'Que bom :)');
+
+    }else if (msg.body.toLowerCase().indexOf('bom falar com você') >= 0) {
+        // Send a new message to the same chat
+        client.sendMessage(msg.from, 'Igualmente!');
+    }
+//    else if (msg.body == 'Quem foi sorteado?') {
+    else if (msg.body.toLowerCase().indexOf('sorteado') >= 0) {
+        // Send a new message to the same chat
+        //var filename = process.argv[2];
+        var filename = "vencedor.txt";
+        fs.readFile(filename, 'utf8', function(err, data) {
+        if (err) throw err;
+        //console.log('OK: ' + filename);
+        //console.log(data)
+        //sorteio = data;
+        if(data.indexOf('ainda') >= 0 ){
+            client.sendMessage(msg.from, "Acho que você quer saber quem venceu o sorteio, mas o sorteio ainda não foi realizado.");
+        }
+        else{
+            client.sendMessage(msg.from, "Acho que você quer saber quem venceu o sorteio. Quem venceu o sortei foi .... ");
+            client.sendMessage(msg.from, data);
+        }
+        });
+    }
+
+      else if (msg.body.startsWith('!sendto ')) {
         // Direct send a new message to specific id
         let number = msg.body.split(' ')[1];
         let messageIndex = msg.body.indexOf(number) + number.length;
@@ -166,12 +207,9 @@ client.on('message', async msg => {
         } else {
             msg.reply('I can only delete my own messages');
         }
-    } else if (msg.body === '!pin') {
-        const chat = await msg.getChat();
-        await chat.pin();
     } else if (msg.body === '!archive') {
         const chat = await msg.getChat();
-        await chat.archive();
+        chat.archive();
     } else if (msg.body === '!mute') {
         const chat = await msg.getChat();
         // mute the chat for 20 seconds
@@ -190,6 +228,9 @@ client.on('message', async msg => {
         const chat = await msg.getChat();
         // stops typing or recording in the chat
         chat.clearState();        
+    }
+    else{
+            msg.reply('Desculpa. Ainda estou aprendendo. Logo poderemos conversar mais :).');
     }
 });
 
